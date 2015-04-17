@@ -25,6 +25,8 @@ namespace Prototyp
 
         Matrix view, projektion;
 
+       
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -46,7 +48,10 @@ namespace Prototyp
             vertices[2] = new VertexPositionColor(new Vector3(-1.0f, -1.0f, 0.0f), Color.Blue);
             vertices[3] = new VertexPositionColor(new Vector3(1.0f, -1.0f, 0.0f), Color.Green);
 
+
+            // point which camera is at, point which camera is looking at, vector to show up direction
             view = Matrix.CreateLookAt(new Vector3(0, 1, 5), Vector3.Zero, Vector3.Up);
+            // things further away than 1000 or nearer than 0.5 are cut away 
             projektion = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.5f, 1000.0f);
 
             effect = new BasicEffect(GraphicsDevice);
