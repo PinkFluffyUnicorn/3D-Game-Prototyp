@@ -30,7 +30,7 @@ namespace Prototyp
         KeyboardState keyboard;
 
         float jumpvalue, timescaler, timeSinceLastUpdate;
-        int score;
+        int score, timelimit, time;
 
         public Game1()
         {
@@ -48,13 +48,14 @@ namespace Prototyp
         {
             keyboard = Keyboard.GetState();
             Random rand = new Random();
-            view = new Vector3[3];
+
             vertices = new VertexPositionColor[4];
             vertices[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
             vertices[1] = new VertexPositionColor(new Vector3(50.0f, 0.0f, -50.0f), Color.Gold);
             vertices[2] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, 50.0f), Color.Yellow);
             vertices[3] = new VertexPositionColor(new Vector3(50.0f, 0.0f, 50.0f), Color.Green);
 
+            view = new Vector3[3];
             view[0] = new Vector3(0, 1, 0);
             view[1] = new Vector3(0, 1, 1);
             view[2] = new Vector3(0, 1, 0);
@@ -66,6 +67,8 @@ namespace Prototyp
             score = 0;
             timescaler = 100;            
             jumpvalue = 0;
+            time = 0;
+            timelimit = 30000;
 
             font = Content.Load<SpriteFont>("SpriteFont1");
 
@@ -102,76 +105,82 @@ namespace Prototyp
         {
             timeSinceLastUpdate = gameTime.ElapsedGameTime.Milliseconds;
             keyboard = Keyboard.GetState();
-            jumpvalue -= timeSinceLastUpdate / timescaler / 5;
-            direction = view[1] - view[0];
-            
-            if (view[0].X < -50)
-            {
-                view[0].X = -50;
-                view[1] = view[0] +direction;
-            }
-
-            if (view[0].X > 50)
-            {
-                view[0].X = 50;
-                view[1] = view[0] + direction;
-            }
-
-            if (view[0].Z < -50)
-            {
-                view[0].Z = -50;
-                view[1] = view[0] + direction;
-            }
-
-            if (view[0].Z > 50)
-            {
-                view[0].Z = 50;
-                view[1] = view[0] + direction;
-            }
-
-            if(jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
-
+            time += (int)timeSinceLastUpdate;
             //exit
-            if(keyboard.IsKeyDown(Keys.Escape)) this.Exit();
-            //jump
-            if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
-            //forward
-            if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
-            {   
-                view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler * 4);
-                view[1] = view[0] + direction;
-            }
-            //backward
-            if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
-            {
-                view[0] = view[0] - direction * (timeSinceLastUpdate / timescaler * 4);
-                view[1] = view[0] + direction;
-            }
+            if (keyboard.IsKeyDown(Keys.Escape)) this.Exit();
 
-            if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
+            if (time < timelimit)
             {
-                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
-            }
 
-            if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A))
-            {
-                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(-timeSinceLastUpdate / 4 / timescaler)));
-            }
+                jumpvalue -= timeSinceLastUpdate / timescaler / 5;
+                direction = view[1] - view[0];
 
-            //drop
-            if (jumpvalue != 0)
-            {
-                view[0].Y += jumpvalue;
-                view[1].Y += jumpvalue;
+                if (view[0].X < -50)
+                {
+                    view[0].X = -50;
+                    view[1] = view[0] + direction;
+                }
+
+                if (view[0].X > 50)
+                {
+                    view[0].X = 50;
+                    view[1] = view[0] + direction;
+                }
+
+                if (view[0].Z < -50)
+                {
+                    view[0].Z = -50;
+                    view[1] = view[0] + direction;
+                }
+
+                if (view[0].Z > 50)
+                {
+                    view[0].Z = 50;
+                    view[1] = view[0] + direction;
+                }
+
+                if (jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
+
+                //jump
+                if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
+                //forward
+                if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
+                {
+                    view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler * 4);
+                    view[1] = view[0] + direction;
+                }
+                //backward
+                if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
+                {
+                    view[0] = view[0] - direction * (timeSinceLastUpdate / timescaler * 4);
+                    view[1] = view[0] + direction;
+                }
+
+                if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
+                {
+                    view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
+                }
+
+                if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A))
+                {
+                    view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(-timeSinceLastUpdate / 4 / timescaler)));
+                }
+
+                //drop
+                if (jumpvalue != 0)
+                {
+                    view[0].Y += jumpvalue;
+                    view[1].Y += jumpvalue;
+                }
+                //kollision eith ground
+                if (view[0].Y < 1)
+                {
+                    view[0].Y = 1;
+                    view[1].Y = 1;
+                }
+
+                base.Update(gameTime);
             }
-            //kollision eith ground
-            if (view[0].Y < 1)
-            {
-                view[0].Y = 1;
-                view[1].Y = 1;
-            }
-             
-            base.Update(gameTime);
         }
 
         /// <summary>
@@ -191,8 +200,19 @@ namespace Prototyp
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, score.ToString(), new Vector2(10, 10), Color.Black);
-
+            //endbildschirm
+            if (time >= timelimit)
+            {
+                spriteBatch.DrawString(font, "Game Over", new Vector2(GraphicsDevice.Viewport.Width / 2 - 60, GraphicsDevice.Viewport.Height / 2 - 50), Color.Black);
+                spriteBatch.DrawString(font, "Your Score: " + score.ToString(), new Vector2(GraphicsDevice.Viewport.Width / 2 - 90, GraphicsDevice.Viewport.Height / 2 - 20), Color.Black);
+            }
+            //HUD
+            else
+            {
+                spriteBatch.DrawString(font, "Time Left: "+((timelimit-time)/1000).ToString(), new Vector2(GraphicsDevice.Viewport.Width / 2 - 70, 10), Color.Black);
+                spriteBatch.DrawString(font, "Score: "+score.ToString(), new Vector2(10, 10), Color.Black);
+            }
+            
             spriteBatch.End();
 
             base.Draw(gameTime);
