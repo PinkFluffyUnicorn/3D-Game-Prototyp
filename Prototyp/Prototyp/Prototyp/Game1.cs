@@ -40,12 +40,13 @@ namespace Prototyp
         protected override void Initialize()
         {
             Random rand = new Random();
-            vertices = new VertexPositionColor[3];
-            vertices[0] = new VertexPositionColor(new Vector3(rand.Next(10) / 10.0f - 1.0f, rand.Next(10) / 10.0f - 1.0f, rand.Next(20) / 10.0f - 1), Color.Red);
-            vertices[1] = new VertexPositionColor(new Vector3(rand.Next(10) / 10.0f - 1.0f, rand.Next(10) / 10.0f - 0.0f, rand.Next(20) / 10.0f - 1), Color.Gold);
-            vertices[2] = new VertexPositionColor(new Vector3(rand.Next(10) / 10.0f - 0.0f, rand.Next(20) / 10.0f - 1.0f, rand.Next(20) / 10.0f - 1), Color.Blue);
+            vertices = new VertexPositionColor[4];
+            vertices[0] = new VertexPositionColor(new Vector3(-1.0f, 1.0f, 0.0f), Color.Red);
+            vertices[1] = new VertexPositionColor(new Vector3(1.0f, 1.0f, 0.0f), Color.Gold);
+            vertices[2] = new VertexPositionColor(new Vector3(-1.0f, -1.0f, 0.0f), Color.Blue);
+            vertices[3] = new VertexPositionColor(new Vector3(1.0f, -1.0f, 0.0f), Color.Green);
 
-            view = Matrix.CreateLookAt(new Vector3(0, 0, 5), Vector3.Zero, Vector3.Up);
+            view = Matrix.CreateLookAt(new Vector3(0, 1, 5), Vector3.Zero, Vector3.Up);
             projektion = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.5f, 1000.0f);
 
             effect = new BasicEffect(GraphicsDevice);
@@ -103,7 +104,7 @@ namespace Prototyp
             effect.Projection = projektion;
 
             effect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleList, vertices, 0, 1);
+            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
 
             base.Draw(gameTime);
         }
