@@ -26,10 +26,11 @@ namespace Prototyp
         Vector3 direction;
         Vector3[] view;
         Matrix projektion;
-
+        SpriteFont font;
         KeyboardState keyboard;
 
         float jumpvalue, timescaler, timeSinceLastUpdate;
+        int score;
 
         // Set the 3D model to draw.
         Model Cube1;
@@ -69,9 +70,11 @@ namespace Prototyp
 
             effect = new BasicEffect(GraphicsDevice);
 
-            timescaler = 100;
-            
+            score = 0;
+            timescaler = 100;            
             jumpvalue = 0;
+
+            font = Content.Load<SpriteFont>("SpriteFont1");
 
             base.Initialize();
         }
@@ -202,19 +205,12 @@ namespace Prototyp
             GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
 
 
-           /* Matrix[] modelTransforms = new Matrix[Cube1.Bones.Count];
-            Cube1.CopyAbsoluteBoneTransformsTo(modelTransforms);
-            foreach (ModelMesh mesh in Cube1.Meshes)
-            {
-                foreach (BasicEffect effect in mesh.Effects)
-                {
-                    effect.EnableDefaultLighting();
-                    effect.World = Matrix.CreateWorld(position, new Vector3(0, 0, 1), Vector3.Up) * worldMatrix;
-                    effect.View = viewMat;
-                    effect.Projection = projectionMat;
-                }
-                mesh.Draw();
-            }*/
+            spriteBatch.Begin();
+
+            spriteBatch.DrawString(font, score.ToString(), new Vector2(10, 10), Color.Black);
+
+            spriteBatch.End();
+
 
             base.Draw(gameTime);
         }
