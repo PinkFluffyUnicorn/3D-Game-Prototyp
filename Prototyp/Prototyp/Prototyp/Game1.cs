@@ -26,10 +26,11 @@ namespace Prototyp
         Vector3 direction;
         Vector3[] view;
         Matrix projektion;
-
+        SpriteFont font;
         KeyboardState keyboard;
 
         float jumpvalue, timescaler, timeSinceLastUpdate;
+        int score;
 
         public Game1()
         {
@@ -62,9 +63,11 @@ namespace Prototyp
 
             effect = new BasicEffect(GraphicsDevice);
 
-            timescaler = 100;
-            
+            score = 0;
+            timescaler = 100;            
             jumpvalue = 0;
+
+            font = Content.Load<SpriteFont>("SpriteFont1");
 
             base.Initialize();
         }
@@ -185,6 +188,12 @@ namespace Prototyp
 
             effect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
+
+            spriteBatch.Begin();
+
+            spriteBatch.DrawString(font, score.ToString(), new Vector2(10, 10), Color.Black);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }
