@@ -29,6 +29,8 @@ namespace Prototyp
         SpriteFont font;
         KeyboardState keyboard;
 
+        Matrix[] _boneTransforms;
+
         float jumpvalue, timescaler, timeSinceLastUpdate;
         int score, timelimit, time;
 
@@ -77,7 +79,7 @@ namespace Prototyp
             time = 0;
             timelimit = 30000;
 
-            //font = Content.Load<SpriteFont>("SpriteFont1");
+            font = Content.Load<SpriteFont>("SpriteFont1");
 
             base.Initialize();
         }
@@ -95,6 +97,8 @@ namespace Prototyp
 
 
             Cube1 = Content.Load<Model>("cube");
+
+            _boneTransforms = new Matrix[Cube1.Bones.Count];
             aspectRatio = graphics.GraphicsDevice.Viewport.AspectRatio;
         }
 
@@ -227,7 +231,26 @@ namespace Prototyp
             
             spriteBatch.End();
 
-            //Cube1.Draw
+
+            Cube1.CopyAbsoluteBoneTransformsTo(_boneTransforms);
+            // Draw the model.
+            foreach (ModelMesh mesh in Cube1.Meshes)
+            {
+                foreach (BasicEffect effects in mesh.Effects)
+                {
+                    effects.World = _boneTransforms[mesh.ParentBone.Index];
+                    effects.View = Matrix.CreateLookAt(new Vector3(1000, 500, 0),new Vector3(0, 150, 0),Vector3.Up);
+
+                    effects.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
+                    GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height,
+                    10,
+                    10000);
+
+                    effects.EnableDefaultLighting();
+                }
+
+                mesh.Draw();
+            }
 
             base.Draw(gameTime);
         }
