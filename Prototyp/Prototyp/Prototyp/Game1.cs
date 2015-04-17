@@ -56,10 +56,10 @@ namespace Prototyp
             Random rand = new Random();
             view = new Vector3[3];
             vertices = new VertexPositionColor[4];
-            vertices[0] = new VertexPositionColor(new Vector3(-10.0f, 0.0f, -10.0f), Color.Red);
-            vertices[1] = new VertexPositionColor(new Vector3(10.0f, 0.0f, -10.0f), Color.Gold);
-            vertices[2] = new VertexPositionColor(new Vector3(-10.0f, 0.0f, 10.0f), Color.Yellow);
-            vertices[3] = new VertexPositionColor(new Vector3(10.0f, 0.0f, 10.0f), Color.Green);
+            vertices[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
+            vertices[1] = new VertexPositionColor(new Vector3(50.0f, 0.0f, -50.0f), Color.Gold);
+            vertices[2] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, 50.0f), Color.Yellow);
+            vertices[3] = new VertexPositionColor(new Vector3(50.0f, 0.0f, 50.0f), Color.Green);
 
             view[0] = new Vector3(0, 1, 0);
             view[1] = new Vector3(0, 1, 1);
@@ -111,6 +111,32 @@ namespace Prototyp
             timeSinceLastUpdate = gameTime.ElapsedGameTime.Milliseconds;
             keyboard = Keyboard.GetState();
             jumpvalue -= timeSinceLastUpdate / timescaler / 5;
+            direction = view[1] - view[0];
+            
+            if (view[0].X < -50)
+            {
+                view[0].X = -50;
+                view[1] = view[0] +direction;
+            }
+
+            if (view[0].X > 50)
+            {
+                view[0].X = 50;
+                view[1] = view[0] + direction;
+            }
+
+            if (view[0].Z < -50)
+            {
+                view[0].Z = -50;
+                view[1] = view[0] + direction;
+            }
+
+            if (view[0].Z > 50)
+            {
+                view[0].Z = 50;
+                view[1] = view[0] + direction;
+            }
+
             if(jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
 
             //exit
@@ -120,16 +146,18 @@ namespace Prototyp
             //forward
             if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
             {   
-                direction = view[1] - view[0];
-                view[0] = view[0] + direction;//* (timeSinceLastUpdate / timescaler);
-                view[1] = view[0] + direction;// *(timeSinceLastUpdate / timescaler);
+
+
+                view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler * 4);
+                view[1] = view[0] + direction;
+
             }
             //backward
             if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
             {
-                direction = view[1] - view[0];
-                view[0] = view[0] - direction;// *(timeSinceLastUpdate / timescaler);
-                view[1] = view[0] + direction;// *(timeSinceLastUpdate / timescaler);
+
+                view[0] = view[0] - direction * (timeSinceLastUpdate / timescaler * 4);
+                view[1] = view[0] + direction;
             }
 
             if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
