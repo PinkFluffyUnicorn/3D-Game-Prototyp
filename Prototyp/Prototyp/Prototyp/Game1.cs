@@ -23,14 +23,14 @@ namespace Prototyp
 
         BasicEffect effect;
 
+        Vector3 direction;
         Vector3[] view;
         Matrix projektion;
 
         KeyboardState keyboard;
 
-        float jumpvalue;
-        int timescaler;
-        float timeSinceLastUpdate;
+        float jumpvalue, timescaler, timeSinceLastUpdate;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -108,51 +108,17 @@ namespace Prototyp
             if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
             //forward
             if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
-            {
-                if (view[1].X < view[0].X)
-                {
-                    view[0].X -= timeSinceLastUpdate / timescaler;
-                    view[1].X -= timeSinceLastUpdate / timescaler;
-                }
-                else if (view[1].X > view[0].X)
-                {
-                    view[0].X += timeSinceLastUpdate / timescaler;
-                    view[1].X += timeSinceLastUpdate / timescaler;
-                }
-                else if (view[1].Z < view[0].Z)
-                {
-                    view[0].Z -= timeSinceLastUpdate / timescaler;
-                    view[1].Z -= timeSinceLastUpdate / timescaler;
-                }
-                else if (view[1].Z > view[0].Z)
-                {
-                    view[0].Z += timeSinceLastUpdate / timescaler;
-                    view[1].Z += timeSinceLastUpdate / timescaler;
-                }
+            {   
+                direction = view[1] - view[0];
+                view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler);
+                view[1] = view[0] + direction * (timeSinceLastUpdate / timescaler);
             }
             //backward
             if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
             {
-                if (view[1].X < view[0].X)
-                {
-                    view[0].X += timeSinceLastUpdate / timescaler;
-                    view[1].X += timeSinceLastUpdate / timescaler;
-                }
-                else if (view[1].X > view[0].X)
-                {
-                    view[0].X -= timeSinceLastUpdate / timescaler;
-                    view[1].X -= timeSinceLastUpdate / timescaler;
-                }
-                else if (view[1].Z < view[0].Z)
-                {
-                    view[0].Z += timeSinceLastUpdate / timescaler;
-                    view[1].Z += timeSinceLastUpdate / timescaler;
-                }
-                else if (view[1].Z > view[0].Z)
-                {
-                    view[0].Z -= timeSinceLastUpdate / timescaler;
-                    view[1].Z -= timeSinceLastUpdate / timescaler;
-                }
+                direction = view[1] - view[0];
+                view[0] = view[0] - direction * (timeSinceLastUpdate / timescaler);
+                view[1] = view[0] - direction * (timeSinceLastUpdate / timescaler);
             }
 
             if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
@@ -162,7 +128,7 @@ namespace Prototyp
 
             if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A))
             {
-                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
+                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(-timeSinceLastUpdate / 4 / timescaler)));
             }
 
             //drop
