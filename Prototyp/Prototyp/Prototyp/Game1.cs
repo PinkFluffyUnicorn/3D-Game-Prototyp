@@ -23,10 +23,16 @@ namespace Prototyp
 
         BasicEffect effect;
 
-        Matrix view, projektion;
+        Vector3 direction;
+        Vector3[] view;
+        Matrix projektion;
+
+        KeyboardState keyboard;
+
+        float jumpvalue, timescaler, timeSinceLastUpdate;
 
         // Set the 3D model to draw.
-        Model myModel;
+        Model Cube1;
 
         // The aspect ratio determines how to scale 3d to 2d projection.
         float aspectRatio;
@@ -46,20 +52,26 @@ namespace Prototyp
         /// </summary>
         protected override void Initialize()
         {
+            keyboard = Keyboard.GetState();
             Random rand = new Random();
+            view = new Vector3[3];
             vertices = new VertexPositionColor[4];
-            vertices[0] = new VertexPositionColor(new Vector3(-1.0f, 1.0f, 0.0f), Color.Red);
-            vertices[1] = new VertexPositionColor(new Vector3(1.0f, 1.0f, 0.0f), Color.Gold);
-            vertices[2] = new VertexPositionColor(new Vector3(-1.0f, -1.0f, 0.0f), Color.Blue);
-            vertices[3] = new VertexPositionColor(new Vector3(1.0f, -1.0f, 0.0f), Color.Green);
+            vertices[0] = new VertexPositionColor(new Vector3(-10.0f, 0.0f, -10.0f), Color.Red);
+            vertices[1] = new VertexPositionColor(new Vector3(10.0f, 0.0f, -10.0f), Color.Gold);
+            vertices[2] = new VertexPositionColor(new Vector3(-10.0f, 0.0f, 10.0f), Color.Yellow);
+            vertices[3] = new VertexPositionColor(new Vector3(10.0f, 0.0f, 10.0f), Color.Green);
 
+            view[0] = new Vector3(0, 1, 0);
+            view[1] = new Vector3(0, 1, 1);
+            view[2] = new Vector3(0, 1, 0);
 
-            // point which camera is at, point which camera is looking at, vector to show up direction
-            view = Matrix.CreateLookAt(new Vector3(0, 1, 5), Vector3.Zero, Vector3.Up);
-            // things further away than 1000 or nearer than 0.5 are cut away 
             projektion = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.5f, 1000.0f);
 
             effect = new BasicEffect(GraphicsDevice);
+
+            timescaler = 100;
+            
+            jumpvalue = 0;
 
             base.Initialize();
         }
@@ -76,7 +88,7 @@ namespace Prototyp
             // TODO: use this.Content to load your game content here
 
 
-            myModel = Content.Load<Model>("Models\\p1_wedge");
+            Cube1 = Content.Load<Model>("Content/cube.FBX");
             aspectRatio = graphics.GraphicsDevice.Viewport.AspectRatio;
         }
 
@@ -96,12 +108,53 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            timeSinceLastUpdate = gameTime.ElapsedGameTime.Milliseconds;
+            keyboard = Keyboard.GetState();
+            jumpvalue -= timeSinceLastUpdate / timescaler / 5;
+            if(jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
 
-            // TODO: Add your update logic here
+            //exit
+            if(keyboard.IsKeyDown(Keys.Escape)) this.Exit();
+            //jump
+            if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
+            //forward
+            if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
+            {   
+                direction = view[1] - view[0];
+                view[0] = view[0] + direction;//* (timeSinceLastUpdate / timescaler);
+                view[1] = view[0] + direction;// *(timeSinceLastUpdate / timescaler);
+            }
+            //backward
+            if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
+            {
+                direction = view[1] - view[0];
+                view[0] = view[0] - direction;// *(timeSinceLastUpdate / timescaler);
+                view[1] = view[0] + direction;// *(timeSinceLastUpdate / timescaler);
+            }
 
+            if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
+            {
+                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
+            }
+
+            if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A))
+            {
+                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(-timeSinceLastUpdate / 4 / timescaler)));
+            }
+
+            //drop
+            if (jumpvalue != 0)
+            {
+                view[0].Y += jumpvalue;
+                view[1].Y += jumpvalue;
+            }
+            //kollision eith ground
+            if (view[0].Y < 1)
+            {
+                view[0].Y = 1;
+                view[1].Y = 1;
+            }
+             
             base.Update(gameTime);
         }
 
@@ -114,11 +167,14 @@ namespace Prototyp
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             effect.VertexColorEnabled = true;
-            effect.View = view;
+            effect.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
             effect.Projection = projektion;
 
             effect.CurrentTechnique.Passes[0].Apply();
             GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
+
+            
+
 
             base.Draw(gameTime);
         }
