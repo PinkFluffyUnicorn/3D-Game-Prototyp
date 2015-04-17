@@ -23,8 +23,14 @@ namespace Prototyp
 
         BasicEffect effect;
 
-        Matrix view, projektion;
+        Vector3[] view;
+        Matrix projektion;
 
+        KeyboardState keyboard;
+
+        float jumpvalue;
+        int timescaler;
+        float timeSinceLastUpdate;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -39,17 +45,26 @@ namespace Prototyp
         /// </summary>
         protected override void Initialize()
         {
+            keyboard = Keyboard.GetState();
             Random rand = new Random();
+            view = new Vector3[3];
             vertices = new VertexPositionColor[4];
-            vertices[0] = new VertexPositionColor(new Vector3(-1.0f, 1.0f, 0.0f), Color.Red);
-            vertices[1] = new VertexPositionColor(new Vector3(1.0f, 1.0f, 0.0f), Color.Gold);
-            vertices[2] = new VertexPositionColor(new Vector3(-1.0f, -1.0f, 0.0f), Color.Blue);
-            vertices[3] = new VertexPositionColor(new Vector3(1.0f, -1.0f, 0.0f), Color.Green);
+            vertices[0] = new VertexPositionColor(new Vector3(-10.0f, 0.0f, -10.0f), Color.Red);
+            vertices[1] = new VertexPositionColor(new Vector3(10.0f, 0.0f, -10.0f), Color.Gold);
+            vertices[2] = new VertexPositionColor(new Vector3(-10.0f, 0.0f, 10.0f), Color.Yellow);
+            vertices[3] = new VertexPositionColor(new Vector3(10.0f, 0.0f, 10.0f), Color.Green);
 
-            view = Matrix.CreateLookAt(new Vector3(0, 1, 5), Vector3.Zero, Vector3.Up);
+            view[0] = new Vector3(0, 1, 0);
+            view[1] = new Vector3(0, 1, 1);
+            view[2] = new Vector3(0, 1, 0);
+
             projektion = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.5f, 1000.0f);
 
             effect = new BasicEffect(GraphicsDevice);
+
+            timescaler = 100;
+            
+            jumpvalue = 0;
 
             base.Initialize();
         }
@@ -82,12 +97,87 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            timeSinceLastUpdate = gameTime.ElapsedGameTime.Milliseconds;
+            keyboard = Keyboard.GetState();
+            jumpvalue -= timeSinceLastUpdate / timescaler / 5;
+            if(jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
 
-            // TODO: Add your update logic here
+            //exit
+            if(keyboard.IsKeyDown(Keys.Escape)) this.Exit();
+            //jump
+            if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
+            //forward
+            if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
+            {
+                if (view[1].X < view[0].X)
+                {
+                    view[0].X -= timeSinceLastUpdate / timescaler;
+                    view[1].X -= timeSinceLastUpdate / timescaler;
+                }
+                else if (view[1].X > view[0].X)
+                {
+                    view[0].X += timeSinceLastUpdate / timescaler;
+                    view[1].X += timeSinceLastUpdate / timescaler;
+                }
+                else if (view[1].Z < view[0].Z)
+                {
+                    view[0].Z -= timeSinceLastUpdate / timescaler;
+                    view[1].Z -= timeSinceLastUpdate / timescaler;
+                }
+                else if (view[1].Z > view[0].Z)
+                {
+                    view[0].Z += timeSinceLastUpdate / timescaler;
+                    view[1].Z += timeSinceLastUpdate / timescaler;
+                }
+            }
+            //backward
+            if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
+            {
+                if (view[1].X < view[0].X)
+                {
+                    view[0].X += timeSinceLastUpdate / timescaler;
+                    view[1].X += timeSinceLastUpdate / timescaler;
+                }
+                else if (view[1].X > view[0].X)
+                {
+                    view[0].X -= timeSinceLastUpdate / timescaler;
+                    view[1].X -= timeSinceLastUpdate / timescaler;
+                }
+                else if (view[1].Z < view[0].Z)
+                {
+                    view[0].Z += timeSinceLastUpdate / timescaler;
+                    view[1].Z += timeSinceLastUpdate / timescaler;
+                }
+                else if (view[1].Z > view[0].Z)
+                {
+                    view[0].Z -= timeSinceLastUpdate / timescaler;
+                    view[1].Z -= timeSinceLastUpdate / timescaler;
+                }
+            }
 
+            if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
+            {
+                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
+            }
+
+            if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A))
+            {
+                view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
+            }
+
+            //drop
+            if (jumpvalue != 0)
+            {
+                view[0].Y += jumpvalue;
+                view[1].Y += jumpvalue;
+            }
+            //kollision eith ground
+            if (view[0].Y < 1)
+            {
+                view[0].Y = 1;
+                view[1].Y = 1;
+            }
+             
             base.Update(gameTime);
         }
 
@@ -100,7 +190,7 @@ namespace Prototyp
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             effect.VertexColorEnabled = true;
-            effect.View = view;
+            effect.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
             effect.Projection = projektion;
 
             effect.CurrentTechnique.Passes[0].Apply();
