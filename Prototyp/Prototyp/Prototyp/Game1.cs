@@ -74,7 +74,7 @@ namespace Prototyp
             timescaler = 100;            
             jumpvalue = 0;
 
-            font = Content.Load<SpriteFont>("SpriteFont1");
+            //font = Content.Load<SpriteFont>("SpriteFont1");
 
             base.Initialize();
         }
@@ -207,10 +207,11 @@ namespace Prototyp
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(font, score.ToString(), new Vector2(10, 10), Color.Black);
+            //spriteBatch.DrawString(font, score.ToString(), new Vector2(10, 10), Color.Black);
 
             spriteBatch.End();
 
+            Cube1.Draw
 
             base.Draw(gameTime);
         }
