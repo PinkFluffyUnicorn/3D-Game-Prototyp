@@ -25,6 +25,11 @@ namespace Prototyp
 
         Matrix view, projektion;
 
+        // Set the 3D model to draw.
+        Model myModel;
+
+        // The aspect ratio determines how to scale 3d to 2d projection.
+        float aspectRatio;
        
 
         public Game1()
@@ -69,6 +74,10 @@ namespace Prototyp
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+
+
+            myModel = Content.Load<Model>("Models\\p1_wedge");
+            aspectRatio = graphics.GraphicsDevice.Viewport.AspectRatio;
         }
 
         /// <summary>
