@@ -46,32 +46,38 @@ namespace Prototyp
         /// </summary>
         protected override void Initialize()
         {
+            //first initalize of keyboardstate
             keyboard = Keyboard.GetState();
+            //randomNumberGenerator
             Random rand = new Random();
 
+            //groundplane
             vertices = new VertexPositionColor[4];
             vertices[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
             vertices[1] = new VertexPositionColor(new Vector3(50.0f, 0.0f, -50.0f), Color.Gold);
             vertices[2] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, 50.0f), Color.Yellow);
             vertices[3] = new VertexPositionColor(new Vector3(50.0f, 0.0f, 50.0f), Color.Green);
 
+            //camera/player
             view = new Vector3[3];
-            view[0] = new Vector3(0, 1, 0);
-            view[1] = new Vector3(0, 1, 1);
-            view[2] = new Vector3(0, 1, 0);
+            view[0] = new Vector3(0, 1, 0); //position
+            view[1] = new Vector3(0, 1, 1); //lookAtPoint
+            view[2] = new Vector3(0, 1, 0); //upDirection
 
+            //projektion Matrix ??
             projektion = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4, GraphicsDevice.Viewport.AspectRatio, 0.5f, 1000.0f);
 
+            //effecthandler ???
             effect = new BasicEffect(GraphicsDevice);
 
+            //initalize constants and variables
             score = 0;
             timescaler = 100;            
             jumpvalue = 0;
             time = 0;
             timelimit = 30000;
-
-            font = Content.Load<SpriteFont>("SpriteFont1");
-
+            
+            //base initialize ...
             base.Initialize();
         }
 
@@ -83,8 +89,8 @@ namespace Prototyp
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            // TODO: use this.Content to load your game content here
+            // font for drawing text
+            font = Content.Load<SpriteFont>("SpriteFont1");
         }
 
         /// <summary>
@@ -103,18 +109,24 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            //update time and keyboard
             timeSinceLastUpdate = gameTime.ElapsedGameTime.Milliseconds;
             keyboard = Keyboard.GetState();
             time += (int)timeSinceLastUpdate;
+
             //exit
             if (keyboard.IsKeyDown(Keys.Escape)) this.Exit();
 
+            //Game over?
             if (time < timelimit)
             {
-
+                // gravity
                 jumpvalue -= timeSinceLastUpdate / timescaler / 5;
+
+                //facedirektion
                 direction = view[1] - view[0];
 
+                //gameborders
                 if (view[0].X < -50)
                 {
                     view[0].X = -50;
@@ -139,16 +151,19 @@ namespace Prototyp
                     view[1] = view[0] + direction;
                 }
 
+                // groundkolision(gravity)
                 if (jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
 
                 //jump
                 if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
+
                 //forward
                 if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
                 {
                     view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler * 4);
                     view[1] = view[0] + direction;
                 }
+
                 //backward
                 if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
                 {
@@ -156,29 +171,33 @@ namespace Prototyp
                     view[1] = view[0] + direction;
                 }
 
+                //rotate left
                 if (keyboard.IsKeyDown(Keys.A) && !keyboard.IsKeyDown(Keys.D))
                 {
                     view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(timeSinceLastUpdate / 4 / timescaler)));
                 }
 
+                //rotate rigth
                 if (keyboard.IsKeyDown(Keys.D) && !keyboard.IsKeyDown(Keys.A))
                 {
                     view[1] = view[0] + (Vector3.Transform((view[1] - view[0]), Matrix.CreateRotationY(-timeSinceLastUpdate / 4 / timescaler)));
                 }
 
-                //drop
+                //dropdown
                 if (jumpvalue != 0)
                 {
                     view[0].Y += jumpvalue;
                     view[1].Y += jumpvalue;
                 }
-                //kollision eith ground
+
+                //groundcolision(position)
                 if (view[0].Y < 1)
                 {
                     view[0].Y = 1;
                     view[1].Y = 1;
                 }
 
+                // base update ...
                 base.Update(gameTime);
             }
         }
@@ -189,18 +208,21 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            //clear Desktop
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            //modify effects
             effect.VertexColorEnabled = true;
             effect.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
             effect.Projection = projektion;
-
             effect.CurrentTechnique.Passes[0].Apply();
-            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
 
+            //draw groundplane
+            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
+            
             spriteBatch.Begin();
 
-            //endbildschirm
+            //game over screen
             if (time >= timelimit)
             {
                 spriteBatch.DrawString(font, "Game Over", new Vector2(GraphicsDevice.Viewport.Width / 2 - 60, GraphicsDevice.Viewport.Height / 2 - 50), Color.Black);
@@ -215,6 +237,7 @@ namespace Prototyp
             
             spriteBatch.End();
 
+            // base draw ...
             base.Draw(gameTime);
         }
     }
