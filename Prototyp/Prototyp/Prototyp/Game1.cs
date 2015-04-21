@@ -256,29 +256,22 @@ namespace Prototyp
             spriteBatch.End();
 
 
-
+            
             Cube1.CopyAbsoluteBoneTransformsTo(_boneTransforms);
             // Draw the model.
             foreach (ModelMesh mesh in Cube1.Meshes)
             {
                 foreach (BasicEffect effects in mesh.Effects)
                 {
-                    effects.World = _boneTransforms[mesh.ParentBone.Index];
-                    effects.View = Matrix.CreateLookAt(new Vector3(1000, 500, 0),new Vector3(0, 150, 0),Vector3.Up);
-
-                    effects.Projection = Matrix.CreatePerspectiveFieldOfView(MathHelper.PiOver4,
-                    GraphicsDevice.Viewport.Width / GraphicsDevice.Viewport.Height,
-                    10,
-                    10000);
-
+                    effects.World = _boneTransforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(0.0f, 0.0f, 3.0f);
+                    effects.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
+                    effects.Projection = projektion;
                     effects.EnableDefaultLighting();
                 }
-
-                mesh.Draw();
+                 mesh.Draw();
             }
 
             // base draw ...
-
             base.Draw(gameTime);
         }
     }
