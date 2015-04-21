@@ -263,7 +263,7 @@ namespace Prototyp
             {
                 foreach (BasicEffect effects in mesh.Effects)
                 {
-                    effects.World = _boneTransforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(0.0f, 0.0f, 3.0f);
+                    effects.World = _boneTransforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(2.0f, 0.0f, 3.0f);
                     effects.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
                     effects.Projection = projektion;
                     effects.EnableDefaultLighting();
