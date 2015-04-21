@@ -17,21 +17,23 @@ namespace Prototyp
         Model model;
         Matrix[] _boneTransforms;
         float scaling;
-        Vector3 translate;
         float rotationX;
         float rotationY;
         float rotationZ;
 
-        public Cube( Model model, float scaling, Vector3 translate, float rotationX, float rotationY, float rotationZ)
+        public Cube( Model model, float scaling, Vector3 position, float rotationX, float rotationY, float rotationZ)
         {
             this.model = model;
             this.scaling = scaling;
             _boneTransforms = new Matrix[model.Bones.Count];
-            this.translate = translate;
+            this.position = position;
             this.rotationX = rotationX;
             this.rotationY = rotationY;
             this.rotationZ = rotationZ;
         }
+
+        public Vector3 getPosition() { return position; }
+        public float getScaling() { return scaling; }
 
         public void Draw(GameTime gametime, Matrix projektion, Matrix view)
         {
@@ -43,7 +45,8 @@ namespace Prototyp
             {
                 foreach (BasicEffect effects in mesh.Effects)
                 {
-                    effects.World = _boneTransforms[mesh.ParentBone.Index] *Matrix.CreateRotationX(rotationX)*Matrix.CreateRotationY(rotationY)*Matrix.CreateRotationZ(rotationZ)* Matrix.CreateScale(scaling) * Matrix.CreateTranslation(translate);
+                    effects.World = _boneTransforms[mesh.ParentBone.Index] *Matrix.CreateRotationX(rotationX)*Matrix.CreateRotationY(rotationY)*Matrix.CreateRotationZ(rotationZ)* Matrix.CreateScale(scaling) * Matrix.CreateTranslation(position);
+
                     effects.View = view;
                     effects.Projection = projektion;
                     effects.EnableDefaultLighting();
