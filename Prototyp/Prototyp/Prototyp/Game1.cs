@@ -23,7 +23,8 @@ namespace Prototyp
 
         BasicEffect effect;
 
-        Vector3 direction;
+        Boolean colision, lastColision;
+        Vector3 direction, lastPosition;
         Vector3[] view;
         Matrix projektion, camera;
         SpriteFont font;
@@ -57,6 +58,8 @@ namespace Prototyp
             keyboard = Keyboard.GetState();
             //randomNumberGenerator
             Random rand = new Random();
+            colision = false;
+            lastColision = false;
 
             envoirment = new List<Cube>();
             coins = new List<Cube>();
@@ -99,7 +102,7 @@ namespace Prototyp
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            envoirment.Add(new Cube(new Vector3(0.0f, 0.0f, 3.0f), Content.Load<Model>("cube"), 1.0f));
+            envoirment.Add(new Cube(new Vector3(0.0f, 1.0f, 10.0f), Content.Load<Model>("cube"), 1.0f));
 
             
             aspectRatio = graphics.GraphicsDevice.Viewport.AspectRatio;
@@ -140,6 +143,9 @@ namespace Prototyp
                 //facedirektion
                 direction = view[1] - view[0];
 
+                //save curent positon
+                lastPosition = view[0];
+
                 //gameborders
                 if (view[0].X < -50)
                 {
@@ -168,20 +174,24 @@ namespace Prototyp
                 // groundkolision(gravity)
                 if (jumpvalue < 0 && view[0].Y == 1) jumpvalue = 0;
 
+                //jumping from blocks
+                if (jumpvalue < 0 && lastColision) jumpvalue = 0;
+                lastColision = false;
+
                 //jump
-                if (keyboard.IsKeyDown(Keys.Space) && view[0].Y == 1) jumpvalue += 1;
+                if (keyboard.IsKeyDown(Keys.Space) && jumpvalue == 0) jumpvalue += 1;
 
                 //forward
                 if (keyboard.IsKeyDown(Keys.W) && !keyboard.IsKeyDown(Keys.S))
                 {
-                    view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler * 4);
+                    view[0] = view[0] + direction * (timeSinceLastUpdate / timescaler * 2);
                     view[1] = view[0] + direction;
                 }
 
                 //backward
                 if (keyboard.IsKeyDown(Keys.S) && !keyboard.IsKeyDown(Keys.W))
                 {
-                    view[0] = view[0] - direction * (timeSinceLastUpdate / timescaler * 4);
+                    view[0] = view[0] - direction * (timeSinceLastUpdate / timescaler * 2);
                     view[1] = view[0] + direction;
                 }
 
@@ -210,6 +220,47 @@ namespace Prototyp
                     view[0].Y = 1;
                     view[1].Y = 1;
                 }
+                
+                //colision with envoirment
+                do
+                {
+                    colision = false;
+                    foreach(Cube cube in envoirment)
+                    {
+                        float X = cube.getPosition().X - view[0].X;
+                        if( X < 0) X = -X;
+                        float Y = cube.getPosition().Y - view[0].Y;
+                        if (Y < 0) Y = -Y;
+                        float Z = cube.getPosition().Z - view[0].Z;
+                        if (Z < 0) Z = -Z;
+                        float skale = 2 * cube.getScaling();
+                        if (X < skale && Y < skale && Z < skale)
+                        {
+                            view[1] += (lastPosition - view[0]);
+                            view[0] += (lastPosition - view[0]);
+                            colision = true;
+                            lastColision = true;
+                        }
+                    } 
+                }
+                while (colision);
+
+                //looting coins
+                foreach (Cube coin in coins)
+                {
+                    float X = coin.getPosition().X - view[0].X;
+                    if (X < 0) X = -X;
+                    float Y = coin.getPosition().Y - view[0].Y;
+                    if (Y < 0) Y = -Y;
+                    float Z = coin.getPosition().Z - view[0].Z;
+                    if (Z < 0) Z = -Z;
+                    float skale = 2 * coin.getScaling();
+                    if (X < skale && Y < skale && Z < skale)
+                    {
+                        coins.Remove(coin);
+                        score += 100;
+                    }
+                } 
 
                 // base update ...
                 base.Update(gameTime);
@@ -232,6 +283,7 @@ namespace Prototyp
             effect.Projection = projektion;
             effect.CurrentTechnique.Passes[0].Apply();
 
+            
 
             //draw groundplane
             GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, groundplane, 0, 2);
@@ -253,8 +305,9 @@ namespace Prototyp
             
             spriteBatch.End();
 
-            for (int i = 0; i < envoirment.Count; i++) envoirment[i].Draw(gameTime, projektion, camera);
-            for (int i = 0; i < coins.Count; i++) envoirment[i].Draw(gameTime, projektion, camera);
+            foreach (Cube cube in envoirment) cube.Draw(gameTime, projektion, camera);
+            foreach (Cube cube in coins) cube.Draw(gameTime, projektion, camera);
+            
                 // base draw ...
                 base.Draw(gameTime);
         }

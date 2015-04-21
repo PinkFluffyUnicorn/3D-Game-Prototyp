@@ -26,6 +26,9 @@ namespace Prototyp
             _boneTransforms = new Matrix[model.Bones.Count];
         }
 
+        public Vector3 getPosition() { return position; }
+        public float getScaling() { return scaling; }
+
         public void Draw(GameTime gametime, Matrix projektion, Matrix view)
         {
             
@@ -36,7 +39,7 @@ namespace Prototyp
             {
                 foreach (BasicEffect effects in mesh.Effects)
                 {
-                    effects.World = _boneTransforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(2.0f, 0.0f, 3.0f);
+                    effects.World = _boneTransforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(position);
                     effects.View = view;
                     effects.Projection = projektion;
                     effects.EnableDefaultLighting();
