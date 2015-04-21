@@ -19,26 +19,27 @@ namespace Prototyp
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
-        VertexPositionColor[] vertices;
+        VertexPositionColor[] groundplane;
 
         BasicEffect effect;
 
         Vector3 direction;
         Vector3[] view;
-        Matrix projektion;
+        Matrix projektion, camera;
         SpriteFont font;
         KeyboardState keyboard;
-
-        Matrix[] _boneTransforms;
 
         float jumpvalue, timescaler, timeSinceLastUpdate;
         int score, timelimit, time;
 
         // Set the 3D model to draw.
-        Model Cube1;
+        List<Cube> envoirment, coins;
 
         // The aspect ratio determines how to scale 3d to 2d projection.
         float aspectRatio;
+            
+
+
        
 
         public Game1()
@@ -55,17 +56,20 @@ namespace Prototyp
         /// </summary>
         protected override void Initialize()
         {
+
             //first initalize of keyboardstate
             keyboard = Keyboard.GetState();
             //randomNumberGenerator
             Random rand = new Random();
 
-            //groundplane
-            vertices = new VertexPositionColor[4];
-            vertices[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
-            vertices[1] = new VertexPositionColor(new Vector3(50.0f, 0.0f, -50.0f), Color.Gold);
-            vertices[2] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, 50.0f), Color.Yellow);
-            vertices[3] = new VertexPositionColor(new Vector3(50.0f, 0.0f, 50.0f), Color.Green);
+            envoirment = new List<Cube>();
+            coins = new List<Cube>();
+
+            groundplane = new VertexPositionColor[4];
+            groundplane[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
+            groundplane[1] = new VertexPositionColor(new Vector3(50.0f, 0.0f, -50.0f), Color.Gold);
+            groundplane[2] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, 50.0f), Color.Yellow);
+            groundplane[3] = new VertexPositionColor(new Vector3(50.0f, 0.0f, 50.0f), Color.Green);
 
             //camera/player
             view = new Vector3[3];
@@ -84,7 +88,7 @@ namespace Prototyp
             timescaler = 100;            
             jumpvalue = 0;
             time = 0;
-            timelimit = 30000;
+            timelimit = 3000000;
             
             //base initialize ...
             base.Initialize();
@@ -99,12 +103,20 @@ namespace Prototyp
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(2.0f, 0.0f, 3.0f),0,0,0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(4.0f, 0.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(6.0f, 0.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(8.0f, 0.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 15.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 9.0f, 35.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 5.0f, new Vector3(10.0f, 0.0f, 35.0f), 0, 0, 0));
 
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(25.0f, 3.0f, 0.0f),0.785f, 0.0f, 0.785f));
 
-            Cube1 = Content.Load<Model>("cube");
-
-            _boneTransforms = new Matrix[Cube1.Bones.Count];
+            
             aspectRatio = graphics.GraphicsDevice.Viewport.AspectRatio;
             // font for drawing text
             font = Content.Load<SpriteFont>("SpriteFont1");
@@ -225,18 +237,23 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+
+         
             //clear Desktop
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             //modify effects
+            camera = Matrix.CreateLookAt(view[0], view[1], view[2]);
             effect.VertexColorEnabled = true;
-            effect.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
+            effect.View = camera;
             effect.Projection = projektion;
             effect.CurrentTechnique.Passes[0].Apply();
 
 
+
+
             //draw groundplane
-            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, vertices, 0, 2);
+            GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, groundplane, 0, 2);
             
             spriteBatch.Begin();
 
@@ -256,23 +273,14 @@ namespace Prototyp
             spriteBatch.End();
 
 
-            
-            Cube1.CopyAbsoluteBoneTransformsTo(_boneTransforms);
-            // Draw the model.
-            foreach (ModelMesh mesh in Cube1.Meshes)
-            {
-                foreach (BasicEffect effects in mesh.Effects)
-                {
-                    effects.World = _boneTransforms[mesh.ParentBone.Index] * Matrix.CreateTranslation(2.0f, 0.0f, 3.0f);
-                    effects.View = Matrix.CreateLookAt(view[0], view[1], view[2]);
-                    effects.Projection = projektion;
-                    effects.EnableDefaultLighting();
-                }
-                 mesh.Draw();
-            }
+            for (int i = 0; i < envoirment.Count; i++) envoirment[i].Draw(gameTime, projektion, camera);
+            for (int i = 0; i < coins.Count; i++) coins[i].Draw(gameTime, projektion, camera);
+                // base draw ...
+                base.Draw(gameTime);
 
-            // base draw ...
-            base.Draw(gameTime);
+
+
         }
+
     }
 }
