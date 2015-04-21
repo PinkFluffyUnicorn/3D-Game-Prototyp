@@ -34,7 +34,7 @@ namespace Prototyp
         int score, timelimit, time;
 
         // Set the 3D model to draw.
-        List<Cube> envoirment, coins;
+        List<Cube> envoirment, coins, remover;
 
         // The aspect ratio determines how to scale 3d to 2d projection.
         float aspectRatio;
@@ -67,6 +67,7 @@ namespace Prototyp
 
             envoirment = new List<Cube>();
             coins = new List<Cube>();
+            remover = new List<Cube>();
 
             groundplane = new VertexPositionColor[4];
             groundplane[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
@@ -91,7 +92,7 @@ namespace Prototyp
             timescaler = 100;            
             jumpvalue = 0;
             time = 0;
-            timelimit = 3000000;
+            timelimit = 30000;
             
             //base initialize ...
             base.Initialize();
@@ -274,10 +275,15 @@ namespace Prototyp
                     float skale = 2 * coin.getScaling();
                     if (X < skale && Y < skale && Z < skale)
                     {
-                        coins.Remove(coin);
+                        remover.Add(coin);
                         score += 100;
                     }
-                } 
+                }
+                foreach (Cube coin in remover)
+                {
+                    coins.Remove(coin);
+                }
+                remover.Clear();
 
                 // base update ...
                 base.Update(gameTime);
@@ -302,13 +308,12 @@ namespace Prototyp
             effect.Projection = projektion;
             effect.CurrentTechnique.Passes[0].Apply();
 
-            
-
-
-
             //draw groundplane
             GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, groundplane, 0, 2);
-            
+
+            foreach (Cube cube in envoirment) cube.Draw(gameTime, projektion, camera);
+            foreach (Cube cube in coins) cube.Draw(gameTime, projektion, camera);
+
             spriteBatch.Begin();
 
             //game over screen
@@ -320,16 +325,11 @@ namespace Prototyp
             //HUD
             else
             {
-                spriteBatch.DrawString(font, "Time Left: "+((timelimit-time)/1000).ToString(), new Vector2(GraphicsDevice.Viewport.Width / 2 - 70, 10), Color.Black);
-                spriteBatch.DrawString(font, "Score: "+score.ToString(), new Vector2(10, 10), Color.Black);
+                spriteBatch.DrawString(font, "Time Left: " + ((timelimit - time) / 1000).ToString(), new Vector2(GraphicsDevice.Viewport.Width / 2 - 70, 10), Color.Black);
+                spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(10, 10), Color.Black);
             }
-            
+
             spriteBatch.End();
-
-
-            foreach (Cube cube in envoirment) cube.Draw(gameTime, projektion, camera);
-            foreach (Cube cube in coins) cube.Draw(gameTime, projektion, camera);
-            
                 // base draw ...
                 base.Draw(gameTime);
 
