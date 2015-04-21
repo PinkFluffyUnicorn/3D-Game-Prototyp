@@ -38,8 +38,8 @@ namespace Prototyp
 
         // The aspect ratio determines how to scale 3d to 2d projection.
         float aspectRatio;
-            
 
+        GraphicsDevice graphicsDevice;
 
        
 
@@ -290,8 +290,6 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-
-         
             //clear Desktop
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
