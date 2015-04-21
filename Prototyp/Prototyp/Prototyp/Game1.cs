@@ -297,7 +297,9 @@ namespace Prototyp
         protected override void Draw(GameTime gameTime)
         {
 
-         
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
             //clear Desktop
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -330,11 +332,9 @@ namespace Prototyp
             }
 
             spriteBatch.End();
-                // base draw ...
-                base.Draw(gameTime);
 
-
-
+            // base draw ...
+            base.Draw(gameTime);
         }
 
     }
