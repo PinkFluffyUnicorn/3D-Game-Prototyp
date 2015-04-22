@@ -34,7 +34,7 @@ namespace Prototyp
         int score, timelimit, time;
 
         // Set the 3D model to draw.
-        List<Cube> envoirment, coins;
+        List<Cube> envoirment, coins, remover;
 
         // The aspect ratio determines how to scale 3d to 2d projection.
         float aspectRatio;
@@ -67,6 +67,7 @@ namespace Prototyp
 
             envoirment = new List<Cube>();
             coins = new List<Cube>();
+            remover = new List<Cube>();
 
             groundplane = new VertexPositionColor[4];
             groundplane[0] = new VertexPositionColor(new Vector3(-50.0f, 0.0f, -50.0f), Color.Red);
@@ -107,19 +108,117 @@ namespace Prototyp
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
 
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(25.0f, 0.0f, 3.0f),0,0,0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(45.0f, 0.0f, 3.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(16.0f, 0.0f, 3.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(18.0f, 0.0f, 3.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 3.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 10.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 15.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 0.0f, 20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(25.0f, 2.0f, 3.0f),0,0,0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(45.0f, 2.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(16.0f, 2.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(18.0f, 2.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 2.0f, 3.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 2.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 2.0f, 15.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 2.0f, 20.0f), 0, 0, 0));
             envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(10.0f, 9.0f, 35.0f), 0, 0, 0));
-            envoirment.Add(new Cube(Content.Load<Model>("cube"), 5.0f, new Vector3(10.0f, 0.0f, 35.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 5.0f, new Vector3(10.0f, 2.0f, 35.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(50.0f, 1.0f, -50.0f), 0, 0, 0));
+            //Pyramide
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(22.0f, 2.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(24.0f, 2.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(26.0f, 2.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(28.0f, 2.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(28.0f, 2.0f, -22.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(28.0f, 2.0f, -24.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(28.0f, 2.0f, -26.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(28.0f, 2.0f, -28.0f), 0, 0, 0));
+
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, -28.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(22.0f, 2.0f, -28.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(24.0f, 2.0f, -28.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(26.0f, 2.0f, -28.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, -26.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, -24.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, -22.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(24.0f, 2.0f, -24.0f), 0, 0, 0));
+            // Big Cube
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 8.0f, new Vector3(40.0f, 8.0f, -40.0f), 0, 0, 0));
+            //Stairs
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(28.0f, 6.0f, -40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(28.0f, 10.0f, -44.0f), 0, 0, 0));
+            // small Cubes
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(40.0f, 2.0f, 40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(30.0f, 2.0f, 40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(20.0f, 2.0f, 40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(40.0f, 2.0f, 30.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(30.0f, 2.0f, 30.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(20.0f, 2.0f, 30.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(40.0f, 2.0f, 20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(30.0f, 2.0f, 20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, 20.0f), 0, 0, 0));
+            // edge small cubes
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(35.0f, 2.0f, 45.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(25.0f, 2.0f, 45.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(15.0f, 2.0f, 45.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(45.0f, 2.0f, 35.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(45.0f, 2.0f, 25.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(45.0f, 2.0f, 15.0f), 0, 0, 0));
+            // more Cubes Schachbrett
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(35.0f, 2.0f, 35.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(35.0f, 2.0f, 25.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(35.0f, 2.0f, 15.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(25.0f, 2.0f, 35.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(25.0f, 2.0f, 25.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(25.0f, 2.0f, 15.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(45.0f, 2.0f, 15.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(40.0f, 2.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(30.0f, 2.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(20.0f, 2.0f, 10.0f), 0, 0, 0));
+
+            // right Side
+            //BIG
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 4.0f, new Vector3(-40.0f, 5.0f, 40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 4.0f, new Vector3(-40.0f, 5.0f, 20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 4.0f, new Vector3(-40.0f, 5.0f, 0.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 4.0f, new Vector3(-40.0f, 5.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 4.0f, new Vector3(-40.0f, 5.0f, -40.0f), 0, 0, 0));
+            //Midlle
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(-40.0f, 12.0f, 30.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(-40.0f, 12.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(-40.0f, 12.0f, -10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 1.0f, new Vector3(-40.0f, 12.0f, -30.0f), 0, 0, 0));
+            // Front Stairs
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-30.0f, 2.0f, 30.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-30.0f, 2.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-30.0f, 2.0f, -10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-30.0f, 2.0f, -30.0f), 0, 0, 0));
+            //Wall
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, 50.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, 40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, 30.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, 20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, 10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, 0.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, -10.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, -20.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, -50.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, -40.0f), 0, 0, 0));
+            envoirment.Add(new Cube(Content.Load<Model>("cube"), 2.0f, new Vector3(-10.0f, 2.0f, -30.0f), 0, 0, 0));
+
 
             coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(30.0f, 1.0f, 0.0f),0.0f, 0.0f, 0.0f));
-
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(10.0f, 13.0f, 35.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(24.0f, 6.0f, -24.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(40.0f, 24.0f, -40.0f), 0.0f, 0.0f, 0.0f));
+            // Schachbrett coins
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(47.0f, 6.0f, 47.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(35.0f, 6.0f, 35.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(40.0f, 6.0f, 15.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(25.0f, 6.0f, 20.0f), 0.0f, 0.0f, 0.0f));
+            //right Side Coins
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(-40.0f, 15.0f, 30.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(-40.0f, 15.0f, 10.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(-40.0f, 15.0f, -10.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(-40.0f, 15.0f, -30.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(-25.0f, 1.0f, -10.0f), 0.0f, 0.0f, 0.0f));
+            coins.Add(new Cube(Content.Load<Model>("cube"), 0.3f, new Vector3(-25.0f, 1.0f, -30.0f), 0.0f, 0.0f, 0.0f));
 
             
             aspectRatio = graphics.GraphicsDevice.Viewport.AspectRatio;
@@ -274,10 +373,15 @@ namespace Prototyp
                     float skale = 2 * coin.getScaling();
                     if (X < skale && Y < skale && Z < skale)
                     {
-                        coins.Remove(coin);
+                        remover.Add(coin);
                         score += 100;
                     }
-                } 
+                }
+                foreach (Cube coin in remover)
+                {
+                    coins.Remove(coin);
+                }
+                remover.Clear();
 
                 // base update ...
                 base.Update(gameTime);
@@ -290,6 +394,12 @@ namespace Prototyp
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+
+
+            GraphicsDevice.BlendState = BlendState.Opaque;
+            GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+
+
             //clear Desktop
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -300,13 +410,12 @@ namespace Prototyp
             effect.Projection = projektion;
             effect.CurrentTechnique.Passes[0].Apply();
 
-            
-
-
-
             //draw groundplane
             GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, groundplane, 0, 2);
-            
+
+            foreach (Cube cube in envoirment) cube.Draw(gameTime, projektion, camera);
+            foreach (Cube cube in coins) cube.Draw(gameTime, projektion, camera);
+
             spriteBatch.Begin();
 
             //game over screen
@@ -318,21 +427,14 @@ namespace Prototyp
             //HUD
             else
             {
-                spriteBatch.DrawString(font, "Time Left: "+((timelimit-time)/1000).ToString(), new Vector2(GraphicsDevice.Viewport.Width / 2 - 70, 10), Color.Black);
-                spriteBatch.DrawString(font, "Score: "+score.ToString(), new Vector2(10, 10), Color.Black);
+                spriteBatch.DrawString(font, "Time Left: " + ((timelimit - time) / 1000).ToString(), new Vector2(GraphicsDevice.Viewport.Width / 2 - 70, 10), Color.Black);
+                spriteBatch.DrawString(font, "Score: " + score.ToString(), new Vector2(10, 10), Color.Black);
             }
-            
+
             spriteBatch.End();
 
-
-            foreach (Cube cube in envoirment) cube.Draw(gameTime, projektion, camera);
-            foreach (Cube cube in coins) cube.Draw(gameTime, projektion, camera);
-            
-                // base draw ...
-                base.Draw(gameTime);
-
-
-
+            // base draw ...
+            base.Draw(gameTime);
         }
 
     }
